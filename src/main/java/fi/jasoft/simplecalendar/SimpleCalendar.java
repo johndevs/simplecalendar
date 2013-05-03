@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -14,20 +15,16 @@ import java.util.TreeSet;
 import com.vaadin.data.util.converter.Converter.ConversionException;
 import com.vaadin.server.PaintException;
 import com.vaadin.server.PaintTarget;
+import com.vaadin.shared.AbstractComponentState;
+import com.vaadin.shared.AbstractFieldState;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.LegacyComponent;
 
+import fi.jasoft.simplecalendar.shared.SimpleCalendarState;
+import fi.jasoft.simplecalendar.shared.Weekday;
+
 @SuppressWarnings("serial")
-public class SimpleCalendar extends AbstractField implements LegacyComponent {
-
-    private boolean multiselect = false;
-
-    private Set<Weekday> disabledWeekdays = new TreeSet<Weekday>();
-    private Set<Integer> disabledMonthdays = new TreeSet<Integer>();
-    private Set<Date> disabledDates = new TreeSet<Date>();
-
-    private Date startDate = null;
-    private Date endDate = null;
+public class SimpleCalendar extends AbstractField<Object> {  
 
     /**
      * The type is a java.util.Set if in multiselect mode else it is a Date
@@ -38,6 +35,24 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
             return Set.class;
         }
         return Date.class;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see com.vaadin.ui.AbstractField#getState()
+     */
+    @Override
+    protected SimpleCalendarState getState() {    
+    	return (SimpleCalendarState) super.getState();
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see com.vaadin.ui.AbstractComponent#getState(boolean)
+     */
+    @Override
+    protected SimpleCalendarState getState(boolean markAsDirty) {
+    	return (SimpleCalendarState) super.getState(markAsDirty);
     }
 
     /**
@@ -62,7 +77,7 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
             ConversionException {
         if (newValue == null) {
             super.setValue(null);
-        } else if (newValue instanceof Date && !multiselect) {
+        } else if (newValue instanceof Date && !isMultiSelect()) {
             if (isDateDisabled((Date) newValue)) {
                 throw new IllegalArgumentException("Date has been disabled");
             } else if (!isDateInRange((Date) newValue)) {
@@ -80,7 +95,7 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
             } else {
                 super.setValue(Collections.singleton(newValue));
             }
-        } else if (newValue instanceof Collection<?> && multiselect) {
+        } else if (newValue instanceof Collection<?> && isMultiSelect()) {
             for (Date d : (Collection<Date>) newValue) {
                 if (isDateDisabled(d)) {
                     throw new IllegalArgumentException("Date has been disabled");
@@ -97,92 +112,6 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public void paintContent(PaintTarget target) throws PaintException {
-
-        // Update multiselect mode
-        target.addAttribute("multiselect", multiselect);
-
-        // Update selection
-        Set<Date> selectionSet;
-        if (getValue() == null) {
-            selectionSet = new HashSet<Date>();
-        } else if (getValue() instanceof Collection<?>) {
-            selectionSet = (Set<Date>) getValue();
-        } else {
-            selectionSet = Collections.singleton((Date) getValue());
-        }
-        String[] selection = new String[selectionSet.size()];
-        Iterator<Date> selectionIter = selectionSet.iterator();
-        int count = 0;
-        while (selectionIter.hasNext()) {
-            Date d = selectionIter.next();
-            selection[count] = String.valueOf(d.getTime());
-            ++count;
-        }
-        target.addVariable(this, "selection", selection);
-
-        // Update disabled weekdays
-        Set<Integer> days = new HashSet<Integer>();
-        for (Weekday wd : disabledWeekdays) {
-            days.add(wd.ordinal());
-        }
-        target.addAttribute("disabledWeekdays", days.toArray());
-
-        // Update disabled monthly dates
-        target.addAttribute("disabledMonthdays", disabledMonthdays.toArray());
-
-        // Update disabled dates
-        String[] disabledDates = new String[this.disabledDates.size()];
-        Iterator<Date> disabledDatesIterator = this.disabledDates.iterator();
-        count = 0;
-        while (disabledDatesIterator.hasNext()) {
-            Date d = disabledDatesIterator.next();
-            disabledDates[count] = String.valueOf(d.getTime());
-            ++count;
-        }
-        target.addVariable(this, "disabledDates", disabledDates);
-
-        // Starting date
-        if (startDate != null) {
-            target.addAttribute("startDate", startDate.getTime());
-        } else {
-            target.addAttribute("startDate", -1L);
-        }
-
-        // Ending date
-        if (endDate != null) {
-            target.addAttribute("endDate", endDate.getTime());
-        } else {
-            target.addAttribute("endDate", -1L);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void changeVariables(Object source, Map<String, Object> variables) {
-
-        if (variables.containsKey("selection")) {
-            String[] selectionStr = (String[]) variables.get("selection");
-            Set<Date> dates = new HashSet<Date>();
-            for (String time : selectionStr) {
-                dates.add(new Date(Long.parseLong(time)));
-            }
-
-            if (multiselect) {
-                setValue(dates, true);
-            } else if (!dates.isEmpty()) {
-                setValue(dates.iterator().next(), true);
-            } else {
-                setValue(null, true);
-            }
-        }
-    }
-
-    /**
      * Determines if a user can select several dates. Please note that setting
      * this to true will effect {@link #getValue()} and
      * {@link #setValue(Object)}.
@@ -191,8 +120,7 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
      *            Should the user be able to select several dates
      */
     public void setMultiSelect(boolean multiselect) {
-        this.multiselect = multiselect;
-        requestRepaint();
+    	getState().multiselect = multiselect;
     }
 
     /**
@@ -201,7 +129,7 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
      * @return Is multiselect mode active
      */
     public boolean isMultiSelect() {
-        return multiselect;
+        return getState(false).multiselect;
     }
 
     /**
@@ -210,11 +138,7 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
      * @param day
      */
     public void setDisabledWeekDays(Weekday... days) {
-        disabledWeekdays.clear();
-        if (days != null) {
-            disabledWeekdays.addAll(Arrays.asList(days));
-        }
-        requestRepaint();
+    	getState().disabledWeekdays = Arrays.asList(days);    	
     }
 
     /**
@@ -223,10 +147,11 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
      * @return
      */
     public Weekday[] getDisabledWeekdays() {
-        if (disabledWeekdays.isEmpty()) {
-            return null;
-        }
-        return disabledWeekdays.toArray(new Weekday[disabledWeekdays.size()]);
+    	List<Weekday> weekDays = getState(false).disabledWeekdays;
+    	if(weekDays == null || weekDays.isEmpty()){
+    		return null;
+    	}    	
+    	return weekDays.toArray(new Weekday[weekDays.size()]);    	
     }
 
     /**
@@ -245,14 +170,14 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
         calendar.setTime(date);
 
         // Check disabled weekdays
-        for (Weekday wd : disabledWeekdays) {
+        for (Weekday wd : getDisabledWeekdays()) {
             if (Weekday.toInteger(wd) == calendar.get(Calendar.DAY_OF_WEEK)) {
                 return true;
             }
         }
 
         // Check disabled monthly days
-        for (Integer d : disabledMonthdays) {
+        for (Integer d : getDisabledMonthlyDates()) {
             if (calendar.get(Calendar.DAY_OF_MONTH) == d) {
                 return true;
             }
@@ -260,7 +185,7 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
 
         // Check for disabled dates
         Calendar dcal = Calendar.getInstance();
-        for (Date d : disabledDates) {
+        for (Date d : getDisabledDates()) {
             dcal.setTime(d);
             if (calendar.get(Calendar.YEAR) == dcal.get(Calendar.YEAR)
                     && calendar.get(Calendar.MONTH) == dcal.get(Calendar.MONTH)
@@ -299,11 +224,7 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
      *            The days of the month which should be disabled each month
      */
     public void setDisabledMonthlyDates(Integer... dates) {
-        disabledMonthdays.clear();
-        if (dates != null) {
-            disabledMonthdays.addAll(Arrays.asList(dates));
-        }
-        requestRepaint();
+    	getState().disabledMonthdays  = Arrays.asList(dates);    	
     }
 
     /**
@@ -312,10 +233,11 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
      * @return
      */
     public Integer[] getDisabledMonthlyDates() {
-        if (disabledMonthdays.isEmpty()) {
+    	List<Integer> disabledDates = getState(false).disabledMonthdays;    	
+        if (disabledDates == null || disabledDates.isEmpty()) {
             return null;
         }
-        return disabledMonthdays.toArray(new Integer[disabledMonthdays.size()]);
+        return disabledDates.toArray(new Integer[disabledDates.size()]);
     }
 
     /**
@@ -325,11 +247,7 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
      *            Dates which are disabled
      */
     public void setDisabledDates(Date... dates) {
-        disabledDates.clear();
-        if (dates != null) {
-            disabledDates.addAll(Arrays.asList(dates));
-        }
-        requestRepaint();
+    	getState().disabledDates = Arrays.asList(dates);    	
     }
 
     /**
@@ -338,7 +256,8 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
      * @return
      */
     public Date[] getDisabledDates() {
-        if (disabledDates.isEmpty()) {
+    	List<Date> disabledDates = getState(false).disabledDates;
+        if (disabledDates == null || disabledDates.isEmpty()) {
             return null;
         }
         return disabledDates.toArray(new Date[disabledDates.size()]);
@@ -351,8 +270,7 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
      *            The first date in the panel
      */
     public void setStartDate(Date start) {
-        startDate = start;
-        requestRepaint();
+    	getState().startDate = start;        
     }
 
     /**
@@ -361,7 +279,7 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
      * @return
      */
     public Date getStartDate() {
-        return startDate;
+        return getState(false).startDate;
     }
 
     /**
@@ -371,8 +289,7 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
      *            The last date the panel should display
      */
     public void setEndDate(Date end) {
-        endDate = end;
-        requestRepaint();
+    	getState().endDate = end;    	
     }
 
     /**
@@ -381,6 +298,6 @@ public class SimpleCalendar extends AbstractField implements LegacyComponent {
      * @return
      */
     public Date getEndDate() {
-        return endDate;
+        return getState(false).endDate;
     }
 }

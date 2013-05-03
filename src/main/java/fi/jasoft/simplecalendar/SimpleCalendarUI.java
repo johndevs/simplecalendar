@@ -14,6 +14,8 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.Reindeer;
 
+import fi.jasoft.simplecalendar.shared.Weekday;
+
 public class SimpleCalendarUI extends UI {
 
     @Override
