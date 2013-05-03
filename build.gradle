@@ -7,14 +7,18 @@ sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
 vaadin {
-	widgetset = 'fi.jasoft.simplecalendar.SimpleCalendarWidgetset'
-	manageWidgetset = false
+	widgetset 'fi.jasoft.simplecalendar.SimpleCalendarWidgetset'
+	manageWidgetset false
 	
 	addon {
 		title 'SimpleCalendar'
 		license 'Apache 2.0'
 		author 'John Ahlroos'
 	}
-
+		
+	jrebel {
+		enabled true
+		location '/home2/eclipse-juno/plugins/org.zeroturnaround.eclipse.embedder_5.2.2.RELEASE-B-201304121109/jrebel/jrebel.jar'
+	}
 }
 

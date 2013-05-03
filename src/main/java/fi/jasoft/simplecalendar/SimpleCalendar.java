@@ -20,12 +20,29 @@ import com.vaadin.shared.AbstractFieldState;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.LegacyComponent;
 
+import fi.jasoft.simplecalendar.shared.DateValueChangeRpc;
 import fi.jasoft.simplecalendar.shared.SimpleCalendarState;
 import fi.jasoft.simplecalendar.shared.Weekday;
 
 @SuppressWarnings("serial")
 public class SimpleCalendar extends AbstractField<Object> {  
-
+	
+	private DateValueChangeRpc valueChangeRpc = new DateValueChangeRpc() {
+		
+		@Override
+		public void selected(Set<Date> dates) {
+			setValue(dates, false);			
+		}
+	};
+	
+	/**
+	 * Default constructor
+	 */
+	public SimpleCalendar() {
+		registerRpc(valueChangeRpc);
+	}
+	
+	
     /**
      * The type is a java.util.Set if in multiselect mode else it is a Date
      */

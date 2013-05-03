@@ -2,17 +2,38 @@ package fi.jasoft.simplecalendar.shared;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.client.communication.RpcProxy;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.AbstractComponentConnector;
 import com.vaadin.shared.ui.Connect;
 
 import fi.jasoft.simplecalendar.SimpleCalendar;
+import fi.jasoft.simplecalendar.client.ui.gwt.DateValueChangeListener;
 import fi.jasoft.simplecalendar.client.ui.gwt.SimpleCalendarWidget;
 
 @Connect(SimpleCalendar.class)
 public class SimpleCalendarConnector extends AbstractComponentConnector {
 
+	private final DateValueChangeRpc valueChangeRpc = RpcProxy.create(DateValueChangeRpc.class, this);
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.vaadin.client.ui.AbstractConnector#init()
+	 */
+	@Override
+	protected void init() {		
+		getWidget().addListener(new DateValueChangeListener() {
+			
+			@Override
+			public void valueChange(Widget target, Set<Date> dates) {				
+				valueChangeRpc.selected(dates);				
+			}
+		});		
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see com.vaadin.client.ui.AbstractComponentConnector#getWidget()
