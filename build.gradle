@@ -1,61 +1,20 @@
 apply from: 'http://plugins.jasoft.fi/vaadin.plugin'
-apply plugin: 'eclipse'
-
-vaadin {
-	version = '7.0.0.rc2'
-	widgetset = 'fi.jasoft.simplecalendar.SimpleCalendarWidgetset'
-	manageWidgetset = false
-}
+apply plugin: 'eclipse-wtp'
 
 group = 'fi.jasoft'
 version = project.hasProperty('BUILD_VERSION') ? getProperty('BUILD_VERSION') : 'development';
-
-addonName = 'SimpleCalendar'
-addonAuthor = 'John Ahlroos'
-addonLicence = 'Apache 2.0'
-
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
+vaadin {
+	widgetset = 'fi.jasoft.simplecalendar.SimpleCalendarWidgetset'
+	manageWidgetset = false
+	
+	addon {
+		title 'SimpleCalendar'
+		license 'Apache 2.0'
+		author 'John Ahlroos'
+	}
 
-/*
- * Builds the deployable demo application
- */
-war{
-  
-    // WAR filename
-    archiveName = addonName + '.war'
-        
-    // Include widgetset
-    dependsOn widgetset
-    
-    // Add sources
-    webInf{
-        into('classes'){
-            from sourceSets.main.allJava
-        }
-    }
 }
 
-/*
- * Builds the Vaadin addon package
- */
-jar{
-    // JAR filename
-    baseName = 'simplecalendar'
-    
-    // Include sources
-    from sourceSets.main.allJava
-    
-    // Create manifest
-    manifest{
-        attributes(
-            'Vaadin-Package-Version': 1,
-            'Vaadin-Widgetsets': vaadin.widgetset,
-            'Vaadin-License-Title': addonLicence,
-            'Implementation-Title': addonName,
-            'Implementation-Version': version,
-            'Implementation-Vendor': addonAuthor,
-        )
-    }
-}
