@@ -31,6 +31,7 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.DateTimeService;
+import com.vaadin.client.Util;
 
 public class SimpleCalendarWidget extends FocusPanel implements ClickHandler,
         FocusHandler, BlurHandler, KeyDownHandler, MouseDownHandler {
@@ -438,10 +439,10 @@ public class SimpleCalendarWidget extends FocusPanel implements ClickHandler,
         return new DateCell(row, column, date);
     }
 
-    private void calculateRowHeights(int gridHeight) {
-        int headerHeight = 19;
-        float rowHeight = ((float) gridHeight - (float) headerHeight)
-                / ((float) ROWS - 1f);
+    private void calculateRowHeights() {
+        int headerHeight = Util.getRequiredHeight(controls);
+        int totalHeight = Util.getRequiredHeight(this) - 12;        
+        double rowHeight = Math.floor((totalHeight - headerHeight) / ROWS);
 
         for (int r = 0; r < ROWS; r++) {
             for (int c = 0; c < COLUMNS; c++) {
@@ -464,13 +465,7 @@ public class SimpleCalendarWidget extends FocusPanel implements ClickHandler,
     @Override
     public void setHeight(String height) {
         super.setHeight(height);
-
-        int gridHeight = getOffsetHeight() - controls.getOffsetHeight() - 10;
-        if (gridHeight > 0) {
-
-            // Recalculate row heights
-            calculateRowHeights(gridHeight);
-        }
+        calculateRowHeights();        
     }
 
     private void setKeyboardFocus(int row, int column) {
