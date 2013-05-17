@@ -26,8 +26,8 @@ import com.vaadin.client.ui.AbstractComponentConnector;
 import com.vaadin.shared.ui.Connect;
 
 import fi.jasoft.simplecalendar.SimpleCalendar;
-import fi.jasoft.simplecalendar.client.ui.gwt.DateValueChangeListener;
-import fi.jasoft.simplecalendar.client.ui.gwt.SimpleCalendarWidget;
+import fi.jasoft.simplecalendar.client.DateValueChangeListener;
+import fi.jasoft.simplecalendar.client.SimpleCalendarWidget;
 
 @Connect(SimpleCalendar.class)
 public class SimpleCalendarConnector extends AbstractComponentConnector {

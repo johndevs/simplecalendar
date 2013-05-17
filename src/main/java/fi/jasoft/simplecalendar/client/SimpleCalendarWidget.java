@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fi.jasoft.simplecalendar.client.ui.gwt;
+package fi.jasoft.simplecalendar.client;
 
 import java.util.Date;
 import java.util.HashSet;
