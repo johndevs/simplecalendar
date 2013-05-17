@@ -1,5 +1,6 @@
 apply from: 'http://plugins.jasoft.fi/vaadin.plugin'
 apply plugin: 'eclipse-wtp'
+apply plugin: 'maven'
 
 group = 'fi.jasoft'
 version = project.hasProperty('BUILD_VERSION') ? getProperty('BUILD_VERSION') : 'development';
@@ -15,4 +16,12 @@ vaadin {
 		license 'Apache 2.0'
 		author 'John Ahlroos'
 	}		
+}
+
+jar{
+	// JAR filename
+	baseName = 'simplecalendar'
+
+	// Include sources
+	from sourceSets.main.allJava
 }
