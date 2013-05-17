@@ -32,8 +32,9 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.DateTimeService;
 import com.vaadin.client.Util;
+import com.vaadin.client.ui.FocusableFlowPanel;
 
-public class SimpleCalendarWidget extends FocusPanel implements ClickHandler,
+public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHandler,
         FocusHandler, BlurHandler, KeyDownHandler, MouseDownHandler {
 
     private static final int ROWS = 7;
@@ -120,24 +121,17 @@ public class SimpleCalendarWidget extends FocusPanel implements ClickHandler,
         year = today.getYear() + 1900;
 
         setStyleName(STYLENAME);
-        setTabIndex(0);
 
         // Add keyboard handlers
         addFocusHandler(this);
         addBlurHandler(this);
         addKeyDownHandler(this);
 
-        // Create the content
-        FlowPanel content = new FlowPanel();
-        content.setWidth("100%");
-        content.setHeight("100%");
-        setWidget(content);
-
         // Create the header
         controls = new HorizontalPanel();
         controls.setStyleName(getStyleName() + "-controls");
         controls.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-        content.add(controls);
+        add(controls);
 
         prevYear = new Button("", new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -233,7 +227,7 @@ public class SimpleCalendarWidget extends FocusPanel implements ClickHandler,
         grid.addClickHandler(this);
         grid.addDomHandler(this, MouseDownEvent.getType());
         grid.setWidth("100%");
-        content.add(grid);
+        add(grid);
 
         // Populate first row with days
         DateTimeService dts = new DateTimeService();
