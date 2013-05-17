@@ -89,6 +89,8 @@ public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHan
     private int[] disabledMonthDates;
 
     private DateCell focusedCell;
+    
+    private String previousHeight;
 
     protected String descriptionDateFormat = "EEEE, MMMM dd, yyyy";
 
@@ -470,7 +472,10 @@ public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHan
     @Override
     public void setHeight(String height) {
         super.setHeight(height);
-        calculateRowHeights();        
+        if(height != previousHeight){
+        	calculateRowHeights();    
+        	previousHeight = height;
+        }
     }
 
     private void setKeyboardFocus(int row, int column) {
