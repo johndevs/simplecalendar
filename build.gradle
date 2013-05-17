@@ -25,3 +25,21 @@ jar{
 	// Include sources
 	from sourceSets.main.allJava
 }
+
+war {
+    // WAR filename
+    archiveName = 'SimpleCalendar.war'
+    
+    // Include widgetset
+    dependsOn test, widgetset
+    
+    // Exclude unneccessery GWT Compiler artifacts
+    exclude "VAADIN/gwt-unitCache/**"
+    
+    // Add sources
+    webInf{
+        into('classes'){
+            from sourceSets.main.allJava
+        }
+    }
+}
