@@ -249,7 +249,7 @@ public class SimpleCalendarWidget extends FocusPanel implements ClickHandler,
 
         // Format first row
         grid.getRowFormatter().setStyleName(0, grid.getStyleName() + "-days");
-
+        
         // Populate grid with cells
         for (int r = 1; r < ROWS; r++) {
             for (int c = 0; c < COLUMNS; c++) {
@@ -440,16 +440,12 @@ public class SimpleCalendarWidget extends FocusPanel implements ClickHandler,
     }
 
     private void calculateRowHeights() {
-        int headerHeight = Util.getRequiredHeight(controls);
-        int totalHeight = Util.getRequiredHeight(this) - 12;        
-        double rowHeight = Math.floor((totalHeight - headerHeight) / ROWS);
+        int totalHeight = Util.getRequiredHeight(this) - Util.measureVerticalPaddingAndBorder(grid.getElement(), 10); 
+        double rowHeight = totalHeight / ROWS;
 
         for (int r = 0; r < ROWS; r++) {
             for (int c = 0; c < COLUMNS; c++) {
-                if (r == 0) {
-                    grid.getCellFormatter().getElement(r, c).getStyle()
-                            .setHeight(headerHeight, Unit.PX);
-                } else {
+                if (r > 0) {
                     grid.getCellFormatter().getElement(r, c).getStyle()
                             .setHeight(rowHeight, Unit.PX);
                 }
