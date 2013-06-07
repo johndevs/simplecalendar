@@ -17,7 +17,10 @@ package fi.jasoft.simplecalendar.client;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.NativeEvent;
@@ -46,7 +49,10 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.DateTimeService;
+import com.vaadin.client.LocaleNotLoadedException;
+import com.vaadin.client.LocaleService;
 import com.vaadin.client.Util;
+import com.vaadin.client.VConsole;
 import com.vaadin.client.ui.FocusableFlowPanel;
 
 public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHandler,
@@ -96,6 +102,8 @@ public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHan
 
     private final Set<DateValueChangeListener> valueChangeListeners = new HashSet<DateValueChangeListener>();
 
+    private final DateTimeService dts = new DateTimeService();
+    
     /**
      * Represents a cell in the date grid
      */
@@ -131,7 +139,7 @@ public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHan
      * Default constructor
      */
     public SimpleCalendarWidget() {
-
+    	
         // Set default date to today
         day = today.getDate();
         month = today.getMonth();
@@ -246,18 +254,6 @@ public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHan
         grid.setWidth("100%");
         add(grid);
 
-        // Populate first row with days
-        DateTimeService dts = new DateTimeService();
-        for (int c = 0; c < COLUMNS; c++) {
-            int index = (dts.getFirstDayOfWeek() + c) % COLUMNS;
-            String dayName = dts.getShortDay(index);
-            dayName = String.valueOf(Character.toUpperCase(dayName.charAt(0)))
-                    + dayName.substring(1);
-            grid.setHTML(0, c, dayName);
-            grid.getCellFormatter().setStyleName(0, c,
-                    grid.getStyleName() + "-day-caption");
-        }
-
         // Format first row
         grid.getRowFormatter().setStyleName(0, grid.getStyleName() + "-days");
         
@@ -275,8 +271,18 @@ public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHan
 
         displayedMonth = month;
         displayedYear = year;
-
-        updateUI(year, month, day);
+    }
+    
+    private void updateWeekdays(){
+        for (int c = 0; c < COLUMNS; c++) {
+            int index = (dts.getFirstDayOfWeek() + c) % COLUMNS;
+            String dayName = dts.getShortDay(index);
+            dayName = String.valueOf(Character.toUpperCase(dayName.charAt(0)))
+                    + dayName.substring(1);
+            grid.setHTML(0, c, dayName);
+            grid.getCellFormatter().setStyleName(0, c,
+                    grid.getStyleName() + "-day-caption");
+        }
     }
 
     /**
@@ -681,6 +687,8 @@ public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHan
 
     private void updateUI(int year, int month, int day) {
 
+    	updateWeekdays();
+    	
         displayedMonth = month;
         displayedYear = year;
 
@@ -710,8 +718,7 @@ public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHan
                 displayedMonth, 1)));
 
         Date date = new Date(displayedYear - 1900, displayedMonth, day);
-        DateTimeService dts = new DateTimeService();
-
+       
         // Set month and year
         String yearName = dts.formatDate(date, "MMMM yyyy");
         yearName = String.valueOf(Character.toUpperCase(yearName.charAt(0)))
@@ -1136,5 +1143,31 @@ public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHan
      */
     public void showDate(Date d) {
         updateUI(d.getYear() + 1900, d.getMonth(), d.getDate());
+    }
+    
+    /**
+     * Sets the locale of the calendar
+     * 
+     * @param locale
+     * 		The locale string
+     */
+    public void setLocale(String locale) {    	
+    	try {
+			dts.setLocale(locale);
+			updateUI();
+		} catch (LocaleNotLoadedException e) {			
+			getLogger().log(Level.WARNING, "Could not set locale '"+locale+"'.", e);
+		}    	
+    }
+    
+    /**
+     * Returns the current locale of the calendar
+     */
+    public String getLocale() {
+    	return dts.getLocale();
+    }
+    
+    private static final Logger getLogger(){
+    	return Logger.getLogger(SimpleCalendarWidget.class.getSimpleName());
     }
 }

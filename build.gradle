@@ -7,15 +7,28 @@ version = project.hasProperty('BUILD_VERSION') ? getProperty('BUILD_VERSION') : 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
+repositories {
+	mavenRepo url:'http://oss.sonatype.org/content/repositories/vaadin-snapshots'
+}
+
 vaadin {
 	widgetset 'fi.jasoft.simplecalendar.SimpleCalendarWidgetset'
 	manageWidgetset false
+	version '7.1-SNAPSHOT'
 	
 	addon {
 		title 'SimpleCalendar'
 		license 'Apache 2.0'
 		author 'John Ahlroos'
 	}		
+	
+	gwt {
+	   strict true
+	}
+		
+	plugin {
+		logToConsole true
+	}
 }
 
 jar{

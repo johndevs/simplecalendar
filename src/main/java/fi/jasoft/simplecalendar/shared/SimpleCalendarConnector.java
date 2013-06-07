@@ -17,9 +17,13 @@ package fi.jasoft.simplecalendar.shared;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.client.DateTimeService;
+import com.vaadin.client.LocaleService;
 import com.vaadin.client.communication.RpcProxy;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.AbstractComponentConnector;
@@ -46,7 +50,7 @@ public class SimpleCalendarConnector extends AbstractComponentConnector {
 			public void valueChange(Widget target, Set<Date> dates) {				
 				valueChangeRpc.selected(dates);				
 			}
-		});		
+		});						
 	}
 	
 	/*
@@ -96,8 +100,7 @@ public class SimpleCalendarConnector extends AbstractComponentConnector {
 				for(int i=0; i<days.size(); i++){
 					daysArray[i] = days.get(i).ordinal();
 				}
-				getWidget().setDisabledWeekDays(daysArray);
-				
+				getWidget().setDisabledWeekDays(daysArray);				
 			}			
 		}
 		
@@ -126,6 +129,9 @@ public class SimpleCalendarConnector extends AbstractComponentConnector {
 				getWidget().setDisabledDates(daysArray);
 			}
 		}		
+		
+		if(stateChangeEvent.hasPropertyChanged("locale")){	
+			getWidget().setLocale(getState().locale);	
+		}
 	}
-
 }

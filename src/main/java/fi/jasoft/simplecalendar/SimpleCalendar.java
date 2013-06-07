@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -331,5 +332,31 @@ public class SimpleCalendar extends AbstractField<Object> {
      */
     public Date getEndDate() {
         return getState(false).endDate;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see com.vaadin.ui.AbstractField#setLocale(java.util.Locale)
+     */
+    @Override
+    public void setLocale(Locale locale) {    	
+    	super.setLocale(locale);    	
+    	if(getLocale() != null){
+    		getState().locale = getLocale().toString();
+    	} else {
+    		getState().locale = null;
+    	}    	
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see com.vaadin.ui.AbstractField#beforeClientResponse(boolean)
+     */
+    @Override
+    public void beforeClientResponse(boolean initial) {    	
+    	super.beforeClientResponse(initial);   	
+    	if(initial && getLocale() != null){    	   		
+    		getState().locale = getLocale().toString();     		    		
+    	}    	
     }
 }

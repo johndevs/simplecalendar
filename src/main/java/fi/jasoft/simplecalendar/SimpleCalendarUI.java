@@ -15,15 +15,22 @@
  */
 package fi.jasoft.simplecalendar;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
 import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -33,8 +40,12 @@ import fi.jasoft.simplecalendar.shared.Weekday;
 
 public class SimpleCalendarUI extends UI {
 
+	private static final Locale DEFAULT_LOCALE = Locale.getDefault();
+	
     @Override
     protected void init(VaadinRequest request) {
+    	
+    	setLocale(DEFAULT_LOCALE);
 
         VerticalLayout content = new VerticalLayout();
         content.setMargin(true);
@@ -67,13 +78,32 @@ public class SimpleCalendarUI extends UI {
                         + "<li>Keyboard navigation with arrow keys</li>"
                         + "<li>Possibility to disable certain dates</li>"
                         + "<li>Date tooltips</li>"
-                        + "<li>Limit start and end dates of calendar</li>",
+                        + "<li>Limit start and end dates of calendar</li>"
+                        + "<li>Selecting multiple locales",
                 ContentMode.HTML);
         layout.addComponent(description);
         layout.setExpandRatio(description, 1);
 
         content.addComponent(layout);
-
+        
+        BeanItemContainer<Locale> locales = new BeanItemContainer<Locale>(Locale.class);
+        locales.addAll(Arrays.asList(Locale.getAvailableLocales()));
+        
+        NativeSelect localeSelect = new NativeSelect();
+        localeSelect.setContainerDataSource(locales);
+        localeSelect.setValue(DEFAULT_LOCALE);
+        localeSelect.setImmediate(true);
+        localeSelect.setItemCaptionMode(ItemCaptionMode.PROPERTY);
+        localeSelect.setItemCaptionPropertyId("displayName");
+        localeSelect.addValueChangeListener(new Property.ValueChangeListener() {
+			
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				calendar.setLocale((Locale)event.getProperty().getValue());								
+			}
+		});
+        content.addComponent(new HorizontalLayout(new Label("Locale:"), localeSelect));
+        
         final CheckBox disableWeekends = new CheckBox("Disable weekends", false);
         disableWeekends.setImmediate(true);
         disableWeekends
