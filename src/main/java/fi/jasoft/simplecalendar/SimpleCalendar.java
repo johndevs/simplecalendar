@@ -182,7 +182,7 @@ public class SimpleCalendar extends AbstractField<Object> {
     public Weekday[] getDisabledWeekdays() {
     	List<Weekday> weekDays = getState(false).disabledWeekdays;
     	if(weekDays == null || weekDays.isEmpty()){
-    		return null;
+    		return new Weekday[0];
     	}    	
     	return weekDays.toArray(new Weekday[weekDays.size()]);    	
     }
@@ -268,7 +268,7 @@ public class SimpleCalendar extends AbstractField<Object> {
     public Integer[] getDisabledMonthlyDates() {
     	List<Integer> disabledDates = getState(false).disabledMonthdays;    	
         if (disabledDates == null || disabledDates.isEmpty()) {
-            return null;
+            return new Integer[0];
         }
         return disabledDates.toArray(new Integer[disabledDates.size()]);
     }
@@ -291,7 +291,7 @@ public class SimpleCalendar extends AbstractField<Object> {
     public Date[] getDisabledDates() {
     	List<Date> disabledDates = getState(false).disabledDates;
         if (disabledDates == null || disabledDates.isEmpty()) {
-            return null;
+            return new Date[0];
         }
         return disabledDates.toArray(new Date[disabledDates.size()]);
     }
