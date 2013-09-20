@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fi.jasoft.simplecalendar;
+package fi.jasoft.simplecalendar.demo;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -36,9 +36,10 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.Reindeer;
 
+import fi.jasoft.simplecalendar.SimpleCalendar;
 import fi.jasoft.simplecalendar.shared.Weekday;
 
-public class SimpleCalendarUI extends UI {
+public class SimpleCalendarDemoUI extends UI {
 
 	private static final Locale DEFAULT_LOCALE = Locale.getDefault();
 	
