@@ -17,13 +17,9 @@ package fi.jasoft.simplecalendar.shared;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.client.DateTimeService;
-import com.vaadin.client.LocaleService;
 import com.vaadin.client.communication.RpcProxy;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.AbstractComponentConnector;

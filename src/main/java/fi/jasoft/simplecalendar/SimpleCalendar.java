@@ -20,21 +20,12 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import com.vaadin.data.util.converter.Converter.ConversionException;
-import com.vaadin.server.PaintException;
-import com.vaadin.server.PaintTarget;
-import com.vaadin.shared.AbstractComponentState;
-import com.vaadin.shared.AbstractFieldState;
 import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.LegacyComponent;
 
 import fi.jasoft.simplecalendar.shared.DateValueChangeRpc;
 import fi.jasoft.simplecalendar.shared.SimpleCalendarState;
