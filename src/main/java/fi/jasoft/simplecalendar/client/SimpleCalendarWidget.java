@@ -17,7 +17,6 @@ package fi.jasoft.simplecalendar.client;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +30,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.KeyCodeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -39,8 +39,6 @@ import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
@@ -50,9 +48,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.DateTimeService;
 import com.vaadin.client.LocaleNotLoadedException;
-import com.vaadin.client.LocaleService;
 import com.vaadin.client.Util;
-import com.vaadin.client.VConsole;
 import com.vaadin.client.ui.FocusableFlowPanel;
 
 public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHandler,
@@ -590,8 +586,7 @@ public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHan
 
         if (w instanceof DateCell) {
             DateCell dc = (DateCell) w;
-            select(dc, event.isControlKeyDown(), event.isShiftKeyDown());
-
+            select(dc, isControlClick(event), event.isShiftKeyDown());
         }
     }
 
@@ -947,7 +942,7 @@ public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHan
     public void onKeyDown(KeyDownEvent event) {
         switch (event.getNativeKeyCode()) {
         case KeyCodes.KEY_LEFT: {
-            if (event.isControlKeyDown() && event.isShiftKeyDown()) {
+            if (isControlShiftKeyPress(event)) {
                 previousYear();
             } else if (event.isShiftKeyDown()) {
                 previousMonth();
@@ -958,7 +953,7 @@ public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHan
         }
             break;
         case KeyCodes.KEY_RIGHT: {
-            if (event.isControlKeyDown() && event.isShiftKeyDown()) {
+            if (isControlShiftKeyPress(event)) {
                 nextYear();
             } else if (event.isShiftKeyDown()) {
                 nextMonth();
@@ -969,7 +964,7 @@ public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHan
         }
             break;
         case KeyCodes.KEY_UP: {
-            if (event.isControlKeyDown() && event.isShiftKeyDown()) {
+            if (isControlShiftKeyPress(event)) {
                 previousYear();
             } else if (event.isShiftKeyDown()) {
                 previousMonth();
@@ -980,7 +975,7 @@ public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHan
         }
             break;
         case KeyCodes.KEY_DOWN: {
-            if (event.isControlKeyDown() && event.isShiftKeyDown()) {
+            if (isControlShiftKeyPress(event)) {
                 nextYear();
             } else if (event.isShiftKeyDown()) {
                 nextMonth();
@@ -993,13 +988,39 @@ public class SimpleCalendarWidget extends FocusableFlowPanel implements ClickHan
         case KeyCodes.KEY_ENTER:
         case 32: { // SPACE
             if (focusedCell != null) {
-                select(focusedCell, event.isControlKeyDown(),
+                select(focusedCell, event.isControlKeyDown() || event.isMetaKeyDown(),
                         event.isShiftKeyDown());
                 event.preventDefault();
             }
         }
             break;
         }
+    }
+    
+    /**
+     * Returns true is ctrl+shift is pressed
+     * 
+     * @param event
+     * 		The native event to check
+     * @return
+     * 		True if both ctrl and shift is pressed
+     */
+    private static boolean isControlShiftKeyPress(KeyCodeEvent event){
+    	assert event != null;
+    	return (event.isControlKeyDown() || event.isMetaKeyDown()) && event.isShiftKeyDown();
+    }
+    
+    /**
+     * Returns true if ctrl is pressed in the click event
+     * 
+     * @param event
+     * 		The event to check
+     * @return
+     * 		True if ctrl is pressed
+     */
+    private static boolean isControlClick(ClickEvent event){
+    	assert event != null;
+    	return (event.isControlKeyDown() || event.isMetaKeyDown());		
     }
 
     /*
