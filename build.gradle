@@ -29,9 +29,14 @@ vaadin {
 jar{
 	// JAR filename
 	baseName = 'simplecalendar'
-
+	
+	// Do not include the demo classes
+	exclude '**/demo/**'
+	
 	// Include sources
-	from sourceSets.main.allJava
+	sourceSets.main.java.srcDirs.each {
+		from it
+	}
 }
 
 war {
