@@ -1,20 +1,14 @@
 apply from: 'http://plugins.jasoft.fi/vaadin.plugin'
 apply plugin: 'eclipse-wtp'
-apply plugin: 'maven'
 
 group = 'fi.jasoft'
 version = project.hasProperty('BUILD_VERSION') ? getProperty('BUILD_VERSION') : 'development';
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
-repositories {
-	mavenRepo url:'http://oss.sonatype.org/content/repositories/vaadin-snapshots'
-}
-
 vaadin {
 	widgetset 'fi.jasoft.simplecalendar.SimpleCalendarWidgetset'
-	manageWidgetset false
-	version '7.1-SNAPSHOT'
+	version '7.1.5'
 	
 	addon {
 		title 'SimpleCalendar'
@@ -40,19 +34,6 @@ jar{
 }
 
 war {
-    // WAR filename
     archiveName = 'SimpleCalendar.war'
-    
-    // Include widgetset
-    dependsOn test, widgetset
-    
-    // Exclude unneccessery GWT Compiler artifacts
-    exclude "VAADIN/gwt-unitCache/**"
-    
-    // Add sources
-    webInf{
-        into('classes'){
-            from sourceSets.main.allJava
-        }
-    }
+   
 }
