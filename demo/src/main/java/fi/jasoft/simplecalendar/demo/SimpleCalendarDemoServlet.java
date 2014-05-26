@@ -9,6 +9,6 @@ import com.vaadin.server.VaadinServlet;
     urlPatterns={"/*","/VAADIN/*"},
     initParams={
         @WebInitParam(name="ui", value="fi.jasoft.simplecalendar.demo.SimpleCalendarDemoUI"),
-		@WebInitParam(name="widgetset", value="fi.jasoft.simplecalendar.SimpleCalendarWidgetset")
+		@WebInitParam(name="widgetset", value="fi.jasoft.simplecalendar.demo.DemoWidgetset")
     })
 public class SimpleCalendarDemoServlet extends VaadinServlet { }
