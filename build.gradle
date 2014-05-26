@@ -8,22 +8,13 @@ targetCompatibility = 1.6
 
 vaadin {
 	widgetset 'fi.jasoft.simplecalendar.SimpleCalendarWidgetset'
-	manageWidgetset false
-	version '7.1.5'
+	version '7.2.+'
 	
 	addon {
 		title 'SimpleCalendar'
 		license 'Apache 2.0'
 		author 'John Ahlroos'
 	}		
-	
-	gwt {
-	   strict true
-	}
-		
-	plugin {
-		logToConsole true
-	}
 }
 
 jar{
@@ -41,5 +32,4 @@ jar{
 
 war {
     archiveName = 'SimpleCalendar.war'
-   
 }
