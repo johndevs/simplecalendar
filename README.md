@@ -13,6 +13,6 @@ The component supports the following features:
 * Limit start and end dates of calendar
 * Selecting multiple locales
 
-A demo of the component can be found at http://john.virtuallypreinstalled.com/SimpleCalendar/
+A demo of the component can be found at https://apps-johndevs.rhcloud.com/simplecalendar/
 
 A prebuilt addon can downloaded from http://vaadin.com/addon/simplecalendar
