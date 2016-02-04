@@ -10,10 +10,15 @@ subprojects {
     targetCompatibility = 1.6
     vaadin {
         version '7.6.1'
+        gwt {
+            strict true
+        }
     }
 }
 
 project(':addon') {
+    apply plugin: 'maven'
+
 	vaadin {
 		widgetset 'fi.jasoft.simplecalendar.SimpleCalendarWidgetset'
 		addon {
@@ -23,14 +28,47 @@ project(':addon') {
         }
 	}
 
+
+    task createAddonPom {
+        pom { artifactId = 'simplecalendar' }.writeTo("META-INF/maven/fi.jasoft/simplecalendar/pom.xml")
+    }
 	jar {
 		baseName 'simplecalendar'
-
-		// Include sources
         sourceSets.main.java.srcDirs.each {
             from it
         }
 	}
+    configurations {
+        deploy
+    }
+    dependencies {
+         deploy 'org.apache.maven.wagon:wagon-ssh:2.2'
+    }
+    artifacts {
+        archives jar
+    }
+    uploadArchives {
+        dependsOn createAddonPom
+        repositories.mavenDeployer {
+            def snapshotRepositoryUrl = System.getProperty('PLUGIN_MAVEN_SNAPSHOT_REPOSITORY')
+            def snapshotRepositoryUser = System.getProperty('PLUGIN_MAVEN_SNAPSHOT_REPOSITORY_USER')
+            def snapshotRepositoryPassword = System.getProperty('PLUGIN_MAVEN_SNAPSHOT_REPOSITORY_PASSWORD')
+            def snapshotRepositoryPrivateKey = System.getProperty('PLUGIN_MAVEN_SNAPSHOT_REPOSITORY_KEY')
+
+            configuration = configurations.deploy
+
+            snapshotRepository( url: snapshotRepositoryUrl ) {
+                authentication(
+                     userName: snapshotRepositoryUser,
+                     password: snapshotRepositoryPassword,
+                     privateKey: snapshotRepositoryPrivateKey
+                )
+            }
+            addFilter('jar') {artifact, file ->
+                artifact.ext == 'jar'
+            }
+        }
+    }   
 }
 
 project(':demo') {	
