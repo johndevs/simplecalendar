@@ -1,4 +1,6 @@
-## Calendar Component for Vaadin
+# Calendar Component for Vaadin
+
+# This project has reached End-Of-Life (EOL) and is no longer maintained.
 
 SimpleCalendar is a simple calendar component for Vaadin.
 
